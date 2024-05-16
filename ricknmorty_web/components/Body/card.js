@@ -1,22 +1,41 @@
-import { Footer } from '../Footer/footer';
-import { Header } from '../Header/header';
-import React from 'react';
-import Head from 'next/head';
-//	import Card from './card';
+import { useQuery, gql } from '@apollo/client';
+import Image from 'next/image';
+
+const GET_ALL_CHARACTERS = gql`
+    query GetAllCharacters {
+        characters {
+            results {
+                id
+                name
+                status
+                species
+                image
+            }
+        }
+    }
+`;
 
 
-export const Card = ({ children }) => {
+export const Card = () => {
+    const { loading, error, data } = useQuery(GET_ALL_CHARACTERS);
+    if (loading) return <p className='text-gray-500'>Loading...</p>;
+    if (error) return <p className='text-gray-500'>Error </p>;
     return (
-        <main className="min-h-screen min-w-screen flex flex-col">
-			<Head>
-                <title>Rick&#38;Morty - Wodka42</title>
-            </Head>
-                <Header></Header>
-            <div className="bg-blue-400 flex justify-between items-center flex-grow">
-                {children} {/* Render other components passed as children */}
-                {/* <Card title="Example Card" description="This is an example card." /> */}
-            </div>
-                <Footer></Footer>
-        </main>
+        <div className='flex flex-wrap justify-center'>
+            {data.characters.results.map(character => (
+                <div key={character.id} className='border border-gray-300 p-5 rounded-lg m-2 shadow-lg flex flex-col items-center '>
+                    <div className='relative w-24 h-24 rounded-full overflow-hidden'>
+                        <Image
+                            src={character.image}
+                            alt={character.name}
+                            layout='fill'
+                            objectFit='cover'
+                        />
+                    </div>
+                    <h3 className='text-lg font-bold mt-2'>{character.name}</h3>
+                    <p className='text-sm text-gray-600'>{character.species} - {character.status}</p>
+                </div>
+            ))}
+        </div>
     );
 }
