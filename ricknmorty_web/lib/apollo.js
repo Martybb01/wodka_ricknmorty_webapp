@@ -13,7 +13,7 @@ const HttpLinka = new HttpLink({
 const createApolloClient = () => {
 	  return new ApolloClient({
 		      link: HttpLinka,
-		      cache: new InMemoryCache()
+		      cache: new InMemoryCache(),
 		    });
 };
 
